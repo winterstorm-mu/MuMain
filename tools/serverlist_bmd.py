@@ -39,8 +39,8 @@ length is unchanged and names may be up to 31 characters.
 Usage:
 
     serverlist_bmd.py list Data/Local/ServerList.bmd
-    serverlist_bmd.py rename Data/Local/ServerList.bmd --from Valhalla --to Ithilla
-    serverlist_bmd.py rename Data/Local/ServerList.bmd --index 0 --to Ithilla
+    serverlist_bmd.py rename Data/Local/ServerList.bmd --from Valhalla --to Winterstorm
+    serverlist_bmd.py rename Data/Local/ServerList.bmd --index 0 --to Winterstorm
 
 Remember there are several copies of Data/. The tracked master is
 src/bin/Data/Local/ServerList.bmd, which CMake copies beside Main on every
