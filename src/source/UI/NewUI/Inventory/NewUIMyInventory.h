@@ -104,6 +104,9 @@ namespace SEASON3B
 
         bool EquipItem(int iIndex, std::span<const BYTE> pbyItemPacket);
         void UnequipItem(int iIndex);
+        // The center of an equipment slot in window-local coordinates; false
+        // for a slot number outside the equipment.
+        bool GetEquipmentSlotCenter(int slot, POINT& center) const;
         void UnequipAllItems();
 
         SEASON3B::REPAIR_MODE GetRepairMode() const override;
@@ -195,6 +198,9 @@ namespace SEASON3B
         void RenderInventoryDetails() const;
 
         bool EquipmentWindowProcess();
+        // Whether the item in equipmentSlot may be taken off here; tells the
+        // player why not.
+        bool CheckTakeOff(int equipmentSlot) const;
         bool InventoryProcess() const;
         bool BtnProcess();
         bool WindowProcess();

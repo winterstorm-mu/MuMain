@@ -15,6 +15,7 @@
 #include "World/MapInfra/MapManager.h"
 #include "Network/Server/WSclient.h"
 #include "Engine/Object/ZzzInterface.h"
+#include "GameLogic/Items/ItemCategories.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -59,6 +60,7 @@ CMonkSystem::~CMonkSystem()
 void CMonkSystem::Init()
 {
     m_mapItemEqualType.clear();
+    m_subItemModels.clear();
     memset(&m_cItemEqualType, 0, sizeof(CItemEqualType));
     m_listGloveformSword.clear();
 
@@ -86,23 +88,30 @@ void CMonkSystem::RegistItem()
 
     m_cItemEqualType.SetModelType(MODEL_PHOENIX_SOUL_STAR, MODEL_SWORD_35_LEFT, MODEL_SWORD_35_RIGHT);
     m_mapItemEqualType.insert(tm_ItemEqualType::value_type(m_cItemEqualType.GetModelType(), m_cItemEqualType));
+
+    for (const auto& [modelType, equalType] : m_mapItemEqualType)
+    {
+        m_subItemModels.insert(equalType.GetSubLeftType());
+        m_subItemModels.insert(equalType.GetSubRightType());
+    }
+}
+
+bool CMonkSystem::IsSubItemModel(int _Type) const
+{
+    return m_subItemModels.contains(_Type);
 }
 
 void CMonkSystem::LoadModelItem()
 {
-    gLoadData.AccessModel(MODEL_SACRED_GLOVE, L"Data\\Item\\", L"Sword33");
     gLoadData.AccessModel(MODEL_SWORD_32_LEFT, L"Data\\Item\\", L"SwordL33");
     gLoadData.AccessModel(MODEL_SWORD_32_RIGHT, L"Data\\Item\\", L"SwordR33");
 
-    gLoadData.AccessModel(MODEL_STORM_HARD_GLOVE, L"Data\\Item\\", L"Sword34");
     gLoadData.AccessModel(MODEL_SWORD_33_LEFT, L"Data\\Item\\", L"SwordL34");
     gLoadData.AccessModel(MODEL_SWORD_33_RIGHT, L"Data\\Item\\", L"SwordR34");
 
-    gLoadData.AccessModel(MODEL_PIERCING_BLADE_GLOVE, L"Data\\Item\\", L"Sword35");
     gLoadData.AccessModel(MODEL_SWORD_34_LEFT, L"Data\\Item\\", L"SwordL35");
     gLoadData.AccessModel(MODEL_SWORD_34_RIGHT, L"Data\\Item\\", L"SwordR35");
 
-    gLoadData.AccessModel(MODEL_PHOENIX_SOUL_STAR, L"Data\\Item\\", L"Sword36");
     gLoadData.AccessModel(MODEL_SWORD_35_LEFT, L"Data\\Item\\", L"Sword36L");
     gLoadData.AccessModel(MODEL_SWORD_35_RIGHT, L"Data\\Item\\", L"Sword36R");
 
@@ -114,19 +123,17 @@ void CMonkSystem::LoadModelItem()
 
 void CMonkSystem::LoadModelItemTexture()
 {
-    gLoadData.OpenTexture(MODEL_SACRED_GLOVE, L"player\\");
     gLoadData.OpenTexture(MODEL_SWORD_32_LEFT, L"player\\");
     gLoadData.OpenTexture(MODEL_SWORD_32_RIGHT, L"player\\");
 
-    gLoadData.OpenTexture(MODEL_STORM_HARD_GLOVE, L"Item\\");
-    gLoadData.OpenTexture(MODEL_SWORD_33_LEFT, L"Item\\");
-    gLoadData.OpenTexture(MODEL_SWORD_33_RIGHT, L"Item\\");
+    // Like the Storm Hard Glove item, the parts use armor textures from Data\Player.
+    const std::wstring stormHardGloveFolders[] = {L"Item\\", L"Player\\"};
+    gLoadData.OpenTexture(MODEL_SWORD_33_LEFT, stormHardGloveFolders);
+    gLoadData.OpenTexture(MODEL_SWORD_33_RIGHT, stormHardGloveFolders);
 
-    gLoadData.OpenTexture(MODEL_PIERCING_BLADE_GLOVE, L"player\\");
     gLoadData.OpenTexture(MODEL_SWORD_34_LEFT, L"player\\");
     gLoadData.OpenTexture(MODEL_SWORD_34_RIGHT, L"player\\");
 
-    gLoadData.OpenTexture(MODEL_PHOENIX_SOUL_STAR, L"player\\");
     gLoadData.OpenTexture(MODEL_SWORD_35_LEFT, L"player\\");
     gLoadData.OpenTexture(MODEL_SWORD_35_RIGHT, L"player\\");
 
@@ -1001,7 +1008,7 @@ void CMonkSystem::RenderRepeatedly(int _Key, OBJECT* pObj)
 
 bool CMonkSystem::IsRideNotUseSkill(int _nSkill, short _Type)
 {
-    if (_Type != MODEL_HORN_OF_FENRIR && _Type != MODEL_HORN_OF_UNIRIA && _Type != MODEL_HORN_OF_DINORANT)
+    if (!GameLogic::Items::IsHornMountModel(_Type))
         return false;
 
     // 탈것타고 있을 경우 사용 불가능한 스킬

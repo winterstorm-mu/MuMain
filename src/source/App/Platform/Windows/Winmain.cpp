@@ -18,6 +18,7 @@
 #endif
 #include <clocale>
 #include <filesystem>
+#include <optional>
 #include <utility>
 #include <vector>
 #include "Core/Platform/WinIni.h" // private-profile (.ini) API
@@ -70,6 +71,7 @@
 #include "Core/Platform/Audio/MiniAudioBackend.h"
 #include "Core/Time/Timer.h"
 #include "Core/Utilities/Log/MuLogger.h"
+#include "Core/Utilities/Log/SdlLogBridge.h"
 #include "UI/Legacy/UIMng.h"
 
 #include "World/MapInfra/w_MapHeaders.h"
@@ -240,6 +242,8 @@ static void ConsumeDiagnosticFrameCapture()
     capture.schedule.Finish();
     if (!mu::GetRenderer().ConsumeFramePixels(pixels))
     {
+        // A skipped frame leaves the request pending; drop it.
+        mu::GetRenderer().CancelFramePixels();
         g_ErrorReport.Write(L"[capture] frame %llu readback failed\r\n",
                             static_cast<unsigned long long>(capture.targetFrame));
         return;
@@ -1829,7 +1833,7 @@ void UpdateResolutionDependentSystems()
     CUIMng::Instance().RepositionSceneUI();
 }
 
-static void ShutdownRuntime(std::thread& cpuUsageRecorder)
+static void ShutdownRuntime(std::thread& cpuUsageRecorder, std::optional<Core::Log::Sdl::ScopedLogOutput>& sdlLogOutput)
 {
     // The recorder polls process state until Destroy is set.
     Destroy = true;
@@ -1868,6 +1872,8 @@ static void ShutdownRuntime(std::thread& cpuUsageRecorder)
     DestroyWindow();
     ShutdownRendererWindow();
     SDL_Quit();
+    // SDL_Quit() may still log, so the bridge outlives it and dies before mu::log.
+    sdlLogOutput.reset();
     mu::log::Shutdown();
 }
 
@@ -1924,6 +1930,10 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int nC
 #endif
 {
     InitializeWorkingDirectoryAndLog();
+    // Installed before SDL starts so init failures are captured; every early
+    // return restores it, and ShutdownRuntime() releases it before mu::log closes.
+    std::optional<Core::Log::Sdl::ScopedLogOutput> sdlLogOutput;
+    sdlLogOutput.emplace();
 
     wchar_t lpszExeVersion[256] = L"unknown";
 
@@ -2300,7 +2310,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int nC
 
     std::thread cpuUsageRecorder(RecordCpuUsage);
     const MSG msg = MainLoop();
-    ShutdownRuntime(cpuUsageRecorder);
+    ShutdownRuntime(cpuUsageRecorder, sdlLogOutput);
 
     return msg.wParam;
 }

@@ -38,6 +38,14 @@ build-linux/
 # Bundled UI fonts (curated, shipped with the client) are source-controlled.
 !**/bin/fonts/
 !**/bin/fonts/**
+# Item data (JSON, written by the item editor) is source-controlled.
+!src/bin/Data/
+!src/bin/Data/Items/
+!src/bin/Data/Items/**
+src/bin/Data/Items/**/*.tmp
+# Effect data (JSON), e.g. the glow colors of the items.
+!src/bin/Data/Effects/
+!src/bin/Data/Effects/**
 **/obj/
 *.user
 *.suo
@@ -77,3 +85,6 @@ src/graphify-out/
 
 # Local-only files
 docs/reviews/
+
+# In-game test runner output (docs/in-game-tests.md)
+in-game-test-results/
