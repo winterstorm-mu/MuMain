@@ -311,11 +311,7 @@ void SEASON3B::CNewUICharacterInfoWindow::RenderSubjectTexts()
     g_pRenderText->RenderText(m_Pos.x, m_Pos.y + 12, strID, 190, 0, RT3_SORT_CENTER);
 
     wchar_t strServerName[MAX_TEXT_LENGTH];
-
-    const wchar_t* apszGlobalText[4]
-        = { I18N::Game::SDServer, I18N::Game::SDNonPvPServer, I18N::Game::SDGoldPvPServer, I18N::Game::SDGoldServer };
-    mu_swprintf(strServerName, apszGlobalText[g_ServerListManager->GetNonPVPInfo()],
-        g_ServerListManager->GetSelectServerName(), g_ServerListManager->GetSelectServerIndex());
+    g_ServerListManager->FormatSelectServerLabel(strServerName, MAX_TEXT_LENGTH);
 
     float fAlpha = sinf(WorldTime * 0.001f) + 1.f;
     g_pRenderText->SetTextColor(255, 255, 255, 127 * (2.f - fAlpha));

@@ -229,7 +229,6 @@ void CLoadData::OpenModelTextures(int Model, std::span<const std::wstring> SubFo
         }
         else
         {
-<<<<<<< HEAD
             if (auto pBitmap = Bitmaps.FindTextureByName(textureFileName))
             {
                 // we try to find an already loaded texture based on the file name
@@ -250,9 +249,6 @@ void CLoadData::OpenModelTextures(int Model, std::span<const std::wstring> SubFo
                 // the game unusable rather than merely missing a texture. The affected
                 // models simply render untextured, so log and carry on.
             }
-=======
-            textureIndex = LoadTextureFromFolders(textureFileName, SubFolders, Wrap, Type, textureIndex);
->>>>>>> upstream/main
         }
 
         MarkSkinAndHair(fileName, textureFileName, textureIndex);

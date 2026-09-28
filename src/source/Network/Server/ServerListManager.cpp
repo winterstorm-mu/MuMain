@@ -6,6 +6,20 @@
 #include "ServerListManager.h"
 #include "I18N/All.h"
 
+namespace
+{
+    // Display names by 1-based server index. The server list packet carries only
+    // the server id and load, so names live here; unnamed indexes fall back to
+    // "<group>-<index>".
+    constexpr const wchar_t* k_ServerNames[] = { L"Nivaria", L"Rimehold", L"Kaldren", L"Veyrholm" };
+    constexpr int k_ServerNameCount = static_cast<int>(sizeof(k_ServerNames) / sizeof(k_ServerNames[0]));
+
+    // ServerList.bmd type 0: plain PvP. The client cannot learn the server's
+    // PvpEnabled (GameServerDefinition), so every server is shown as PvP and the
+    // server enforces the real rule.
+    constexpr BYTE k_ServerTypePvP = 0;
+}
+
 CServerListManager::CServerListManager()
 {
     m_iTotalServer = 0;
@@ -165,7 +179,7 @@ void CServerListManager::InsertServer(CServerGroup* pServerGroup, int iConnectIn
     pServerInfo->m_iIndex = (iConnectIndex % MAX_SERVER_PER_GROUP) + 1;
     pServerInfo->m_iConnectIndex = iConnectIndex;
     pServerInfo->m_iPercent = iServerPercent;
-    pServerInfo->m_byNonPvP = pServerGroup->m_abyNonPvpServer[pServerInfo->m_iIndex - 1];
+    pServerInfo->m_byNonPvP = k_ServerTypePvP;
 
     int iTextIndex;
     if (iServerPercent >= 128)
@@ -181,28 +195,12 @@ void CServerListManager::InsertServer(CServerGroup* pServerGroup, int iConnectIn
         iTextIndex = 562;
     }
 
-    switch (pServerInfo->m_byNonPvP)
-    {
-    case 0:
-        mu_swprintf(pServerInfo->m_bName, L"%ls-%d %ls", pServerGroup->m_szName,
-            pServerInfo->m_iIndex, I18N::Game::Lookup(iTextIndex));
-        break;
-
-    case 1:
-        mu_swprintf(pServerInfo->m_bName, L"%ls-%d(Non-PVP) %ls", pServerGroup->m_szName,
-            pServerInfo->m_iIndex, I18N::Game::Lookup(iTextIndex));
-        break;
-
-    case 2:
-        mu_swprintf(pServerInfo->m_bName, L"%ls-%d(Gold PVP) %ls", pServerGroup->m_szName,
-            pServerInfo->m_iIndex, I18N::Game::Lookup(iTextIndex));
-        break;
-
-    case 3:
-        mu_swprintf(pServerInfo->m_bName, L"%ls-%d(Gold) %ls", pServerGroup->m_szName,
-            pServerInfo->m_iIndex, I18N::Game::Lookup(iTextIndex));
-        break;
-    }
+    const wchar_t* pszStatus = I18N::Game::Lookup(iTextIndex);
+    const wchar_t* pszServerName = GetServerName(pServerInfo->m_iIndex);
+    if (pszServerName != nullptr)
+        mu_swprintf(pServerInfo->m_bName, L"%ls %ls", pszServerName, pszStatus);
+    else
+        mu_swprintf(pServerInfo->m_bName, L"%ls-%d %ls", pServerGroup->m_szName, pServerInfo->m_iIndex, pszStatus);
 
     pServerGroup->InsertServerInfo(pServerInfo);
 }
@@ -263,6 +261,32 @@ wchar_t* CServerListManager::GetSelectServerName()
 int CServerListManager::GetSelectServerIndex()
 {
     return m_iSelectServerIndex;
+}
+
+const wchar_t* CServerListManager::GetServerName(int iIndex)
+{
+    if (iIndex < 1 || iIndex > k_ServerNameCount)
+        return nullptr;
+
+    return k_ServerNames[iIndex - 1];
+}
+
+const wchar_t* CServerListManager::GetSelectServerDisplayName()
+{
+    const wchar_t* pszServerName = GetServerName(m_iSelectServerIndex);
+    return pszServerName != nullptr ? pszServerName : m_szSelectServerName;
+}
+
+void CServerListManager::FormatSelectServerLabel(wchar_t* pszOut, size_t outSize)
+{
+    const wchar_t* pszServerName = GetServerName(m_iSelectServerIndex);
+    if (pszServerName != nullptr)
+    {
+        mu_swprintf_s(pszOut, outSize, L"[%ls]", pszServerName);
+        return;
+    }
+
+    mu_swprintf_s(pszOut, outSize, I18N::Game::SDServer, m_szSelectServerName, m_iSelectServerIndex);
 }
 
 

@@ -42,6 +42,9 @@ public:
     void SetSelectServerInfo(wchar_t* pszName, int iIndex, BYTE byNonPvP);
     wchar_t* GetSelectServerName();
     int GetSelectServerIndex();
+    const wchar_t* GetSelectServerDisplayName();
+    void FormatSelectServerLabel(wchar_t* pszOut, size_t outSize);
+    static const wchar_t* GetServerName(int iIndex);
     BYTE GetNonPVPInfo();
     bool IsNonPvP();
     void SetTotalServer(int iTotalServer);

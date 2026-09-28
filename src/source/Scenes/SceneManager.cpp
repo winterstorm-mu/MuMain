@@ -233,7 +233,7 @@ static void GenerateScreenshotFilename(wchar_t* outFileName, wchar_t* outMessage
     mu_swprintf(outMessage, I18N::Game::SScreenshotSaved, outFileName);
 
     wchar_t lpszTemp[64];
-    mu_swprintf(lpszTemp, L" [%ls / %ls]", g_ServerListManager->GetSelectServerName(), Hero->ID);
+    mu_swprintf(lpszTemp, L" [%ls / %ls]", g_ServerListManager->GetSelectServerDisplayName(), Hero->ID);
     wcscat(outMessage, lpszTemp);
 }
 
