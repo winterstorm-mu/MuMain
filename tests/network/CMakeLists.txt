@@ -74,6 +74,7 @@ mu_add_test(
     NAME test_quest_text_packet
     SOURCES
         test_quest_text_packet.cpp
+        ${CMAKE_SOURCE_DIR}/src/source/App/Platform/Windows/Winmain.cpp
     LINK_LIBS
         MuClient
 )

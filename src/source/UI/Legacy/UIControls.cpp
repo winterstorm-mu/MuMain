@@ -78,6 +78,8 @@ int CutStr(const wchar_t* pszSrcText, wchar_t* pTextOut, const int iTargetPixelW
         {
             // we can copy that to the destination
             tempString.copy(pTextOut, tempString.length(), 0);
+            // copy() does not terminate; callers pass uninitialised line buffers.
+            pTextOut[tempString.length()] = L'\0';
             iLineIndex++;
             processedSourceCharacters += tempString.length();
 
