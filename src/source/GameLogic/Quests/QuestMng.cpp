@@ -302,6 +302,33 @@ void CQuestMng::SetCurQuestProgress(DWORD dwQuestIndex)
     }
 }
 
+void CQuestMng::AddCustomQuestText(WORD wGroup, WORD wNumber, const wchar_t* pszTitle, const wchar_t* pszSummary)
+{
+    const DWORD dwQuestIndex = (static_cast<DWORD>(wGroup) << 16) | wNumber;
+
+    // A re-send keeps the ids of the first send, so it updates the text in place.
+    QuestProgressMap::const_iterator iter = m_mapQuestProgress.find(dwQuestIndex);
+    const bool bHasCustomIds = iter != m_mapQuestProgress.end() && iter->second.m_nSubject >= QM_CUSTOM_WORDS_ID_BASE;
+
+    SQuestProgress sProgress = {};
+    sProgress.m_byUIType = QM_UITYPE_TEXT_ONLY;
+    if (bHasCustomIds)
+    {
+        sProgress.m_nSubject = iter->second.m_nSubject;
+        sProgress.m_nSummary = iter->second.m_nSummary;
+    }
+    else
+    {
+        sProgress.m_nSubject = m_nNextCustomWordsId;
+        sProgress.m_nSummary = m_nNextCustomWordsId + 1;
+        m_nNextCustomWordsId += QM_CUSTOM_WORDS_PER_QUEST;
+    }
+
+    m_mapQuestWords[sProgress.m_nSubject] = pszTitle ? pszTitle : L"";
+    m_mapQuestWords[sProgress.m_nSummary] = pszSummary ? pszSummary : L"";
+    m_mapQuestProgress[dwQuestIndex] = sProgress;
+}
+
 const wchar_t* CQuestMng::GetWords(int nWordsIndex)
 {
     QuestWordsMap::const_iterator iter = m_mapQuestWords.find(nWordsIndex);
@@ -419,7 +446,8 @@ const wchar_t* CQuestMng::GetSummary(DWORD dwQuestIndex)
 bool CQuestMng::IsRequestRewardQS(DWORD dwQuestIndex)
 {
     QuestProgressMap::const_iterator iter = m_mapQuestProgress.find(dwQuestIndex);
-    _ASSERT(iter != m_mapQuestProgress.end());
+    if (iter == m_mapQuestProgress.end())
+        return false;
 
     if (0 == iter->second.m_anAnswer[0])
         return true;
@@ -797,7 +825,8 @@ bool CQuestMng::IsEPRequestRewardState(DWORD dwQuestIndex)
 bool CQuestMng::IsQuestByEtc(DWORD dwQuestIndex)
 {
     QuestProgressMap::const_iterator iter = m_mapQuestProgress.find(dwQuestIndex);
-    _ASSERT(iter != m_mapQuestProgress.end());
+    if (iter == m_mapQuestProgress.end())
+        return false;
 
     if (iter->second.m_byUIType == 1)
         return true;

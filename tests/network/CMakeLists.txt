@@ -70,6 +70,14 @@ mu_add_test(
         ${CMAKE_SOURCE_DIR}/src/source/GameLogic/Commands/ChatCommandCatalog.cpp
 )
 
+mu_add_test(
+    NAME test_quest_text_packet
+    SOURCES
+        test_quest_text_packet.cpp
+    LINK_LIBS
+        MuClient
+)
+
 if(DOTNET_EXECUTABLE)
     add_test(
         NAME login_diagnostics_contract

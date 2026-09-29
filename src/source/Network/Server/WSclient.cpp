@@ -2,6 +2,7 @@
 #include "App/Control/ControlTaps.h"
 #include "Core/Utilities/Log/MuLogger.h"
 #include "UI/Chat/Chat.h"
+#include "Network/Server/QuestTextPacket.h"
 #include <memory>
 #include "UI/Legacy/UIManager.h"
 #include "Guild/GuildCache.h"
@@ -14255,6 +14256,9 @@ static void ProcessPacket(const BYTE* ReceiveBuffer, int32_t Size)
             break;
         case 0x20:
             ReceiveProgressQuestListReady(ReceiveBuffer);
+            break;
+        case QUEST_TEXT_SUBCODE:
+            Network::Quest::ReceiveQuestText(std::span<const BYTE>(ReceiveBuffer, Size));
             break;
         }
     }

@@ -9,6 +9,14 @@
 #define QM_MAX_ANSWER 5
 #define QM_MAX_REQUEST_REWARD_TEXT_LEN 64
 
+// Word ids of quest text sent by the server. Shipped QuestWords ids stop at
+// 20999, so this range cannot collide with them.
+constexpr int QM_CUSTOM_WORDS_ID_BASE = 0x40000000;
+// A server-sent quest owns one id for its title and one for its summary.
+constexpr int QM_CUSTOM_WORDS_PER_QUEST = 2;
+// SQuestProgress::m_byUIType of an entry that only carries text for the T window.
+constexpr BYTE QM_UITYPE_TEXT_ONLY = 1;
+
 struct SNPCDialogue
 {
     int m_nNPCWords;
@@ -92,6 +100,8 @@ protected:
 
     std::map<WORD, bool> m_mapEPRequestRewardState;
 
+    int m_nNextCustomWordsId = QM_CUSTOM_WORDS_ID_BASE;
+
     int m_nNPCIndex;
     const wchar_t* m_szNPCName; // [MAX_MONSTER_NAME] ;
 
@@ -111,6 +121,9 @@ public:
     const wchar_t* GetNPCName();
 
     void SetCurQuestProgress(DWORD dwQuestIndex);
+    // Caches the title and summary of quest (group, number) under index
+    // (group << 16) | number. Does not touch the current quest list.
+    void AddCustomQuestText(WORD wGroup, WORD wNumber, const wchar_t* pszTitle, const wchar_t* pszSummary);
 
     const wchar_t* GetWords(int nWordsIndex);
     const wchar_t* GetNPCDlgNPCWords(DWORD dwDlgState);

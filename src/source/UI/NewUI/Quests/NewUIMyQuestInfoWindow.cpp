@@ -452,13 +452,18 @@ void CNewUIMyQuestInfoWindow::SetCurQuestList(DWordList* pDWordList)
     wchar_t szOutput[64];
     g_pRenderText->SetFont(g_hFont);
 
-    int i;
+    int i = 1;
     DWordList::iterator iter;
-    for (iter = pDWordList->begin(), i = 1; iter != pDWordList->end(); advance(iter, 1), ++i)
+    for (iter = pDWordList->begin(); iter != pDWordList->end(); advance(iter, 1))
     {
-        ::mu_swprintf(szInput, L"%d.%ls", i, g_QuestMng.GetSubject(*iter));
+        const wchar_t* pszSubject = g_QuestMng.GetSubject(*iter);
+        if (pszSubject == NULL)
+            continue;
+
+        ::mu_swprintf(szInput, L"%d.%ls", i, pszSubject);
         ::ReduceStringByPixel(szOutput, 64, szInput, 150);
         m_CurQuestListBox.AddText(*iter, szOutput);
+        ++i;
     }
 
     if (m_eTabBtnIndex == TAB_QUEST && 0 == m_CurQuestListBox.GetLineNum())
@@ -478,13 +483,19 @@ void CNewUIMyQuestInfoWindow::SetSelQuestSummary()
     if (0 == dwSelQuestIndex)
         return;
 
-    m_QuestContentsListBox.AddText(
-        g_hFontBold, 0xff0ab9ff, RT3_SORT_CENTER, g_QuestMng.GetSubject(dwSelQuestIndex));
+    const wchar_t* pszSubject = g_QuestMng.GetSubject(dwSelQuestIndex);
+    if (pszSubject == NULL)
+        return;
+
+    m_QuestContentsListBox.AddText(g_hFontBold, 0xff0ab9ff, RT3_SORT_CENTER, pszSubject);
+
+    const wchar_t* pszSummary = g_QuestMng.GetSummary(dwSelQuestIndex);
+    if (pszSummary == NULL)
+        return;
 
     g_pRenderText->SetFont(g_hFont);
     wchar_t aszSummary[8][64];
-    int nLine = ::DivideStringByPixel(
-        &aszSummary[0][0], 8, 64, g_QuestMng.GetSummary(dwSelQuestIndex), 150);
+    int nLine = ::DivideStringByPixel(&aszSummary[0][0], 8, 64, pszSummary, 150);
     int i;
     for (i = 0; i < nLine; ++i)
         m_QuestContentsListBox.AddText(g_hFont, 0xffd2e6ff, RT3_SORT_LEFT, aszSummary[i]);

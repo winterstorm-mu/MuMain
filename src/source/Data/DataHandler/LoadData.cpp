@@ -229,26 +229,7 @@ void CLoadData::OpenModelTextures(int Model, std::span<const std::wstring> SubFo
         }
         else
         {
-            if (auto pBitmap = Bitmaps.FindTextureByName(textureFileName))
-            {
-                // we try to find an already loaded texture based on the file name
-                Bitmaps.LoadImage(pBitmap->BitmapIndex, pBitmap->FileName);
-                pModel->IndexTexture[i] = pBitmap->BitmapIndex;
-            }
-            else
-            {
-                wchar_t szErrorMsg[256] = { 0, };
-                mu_swprintf(szErrorMsg, L"OpenTexture Failed: %ls of %hs", szFullPath, pModel->Name);
-                g_ErrorReport.Write(L"%ls (Model=%d)\r\n", szErrorMsg, Model);
-
-                // TODO: restore the modal once the remaining texture gaps are closed.
-                // A handful of models reference textures that aren't shipped at the
-                // path they look in (Data/World74/ExtTile01-16.OZJ, the LuckyItem
-                // textures). Each miss used to open a blocking message box - and
-                // answering "No" tears down the client via ExitProcess - which makes
-                // the game unusable rather than merely missing a texture. The affected
-                // models simply render untextured, so log and carry on.
-            }
+            textureIndex = LoadTextureFromFolders(textureFileName, SubFolders, Wrap, Type, textureIndex);
         }
 
         MarkSkinAndHair(fileName, textureFileName, textureIndex);
