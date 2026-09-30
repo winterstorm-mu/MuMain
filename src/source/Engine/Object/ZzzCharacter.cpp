@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <span>
 #include "UI/Chat/Chat.h"
+#include "Engine/Object/EliteMonsters.h"
 #include "Core/Globals/_enum.h"
 #ifdef _WIN32
 #include <eh.h>
@@ -11689,6 +11690,7 @@ void CreateCharacterPointer(CHARACTER* c, int Type, unsigned char PositionX, uns
     o->EnableBoneMatrix = true;
     o->EnableShadow = false;
     c->Dead = 0;
+    c->Elite = false;
     c->Blood = false;
     c->GuildTeam = 0;
     c->Run = 0;
@@ -13102,13 +13104,6 @@ namespace
             return KIND_TMP;
         }
 
-        // Dungeon Warden (elite content) reuses number 211, which the legacy
-        // classifier below would otherwise treat as an NPC.
-        if (rawType == 211)
-        {
-            return KIND_MONSTER;
-        }
-
         // Exception range that must stay monster even though values are > 200.
         if (rawType >= 480 && rawType <= 491)
         {
@@ -13184,7 +13179,7 @@ void Setting_Monster(CHARACTER* c, EMonsterType Type, int PositionX, int Positio
     }
 }
 
-CHARACTER* CreateMonster(EMonsterType Type, int PositionX, int PositionY, int Key)
+static CHARACTER* CreateMonsterModel(EMonsterType Type, int PositionX, int PositionY, int Key)
 {
     CHARACTER* c = NULL;
     OBJECT* o;
@@ -15037,6 +15032,24 @@ CHARACTER* CreateMonster(EMonsterType Type, int PositionX, int PositionY, int Ke
 
     Setting_Monster(c, Type, PositionX, PositionY);
 
+    return c;
+}
+
+// Elite numbers (Elites::Find) are created as their appearance monster, then
+// renamed, forced hostile and flagged so plates and alerts can tell them apart.
+CHARACTER* CreateMonster(EMonsterType Type, int PositionX, int PositionY, int Key)
+{
+    const Elites::Entry* elite = Elites::Find(static_cast<int>(Type));
+    if (elite == nullptr)
+        return CreateMonsterModel(Type, PositionX, PositionY, Key);
+
+    CHARACTER* c = CreateMonsterModel(static_cast<EMonsterType>(elite->Appearance), PositionX, PositionY, Key);
+    if (c == nullptr)
+        return nullptr;
+
+    wcscpy_s(c->ID, MAX_MONSTER_NAME + 1, elite->Name);
+    c->Object.Kind = KIND_MONSTER;
+    c->Elite = true;
     return c;
 }
 

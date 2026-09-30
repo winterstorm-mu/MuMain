@@ -153,6 +153,7 @@ public:
     
     BYTE        TargetAngle;
     float        Dead; // Number of reference frames after death
+    bool         Elite; // Created from an Elites::Find entry; cleared by CreateCharacterPointer
     WORD		Skill;
     BYTE        SwordCount;
     BYTE		byExtensionSkill;

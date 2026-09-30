@@ -34,8 +34,12 @@ namespace
 // Draws a segmented monster HP bar, horizontally centered on centerX with its
 // top edge at topY. `steps` is the segment count (HP granularity); `scale`
 // horizontally compresses the bar (1.0 == original width). `alpha` (0..1) scales
-// the alpha byte of every quad.
-void DrawHealthBar(int centerX, int topY, float health, int steps, float scale, float alpha)
+// the alpha byte of every quad. `fillArgb` is the colour of the filled segments.
+constexpr DWORD kHealthFillRed = 0xFFFA0A00u;
+constexpr DWORD kHealthFillGold = 0xFFFFC800u;
+
+void DrawHealthBar(int centerX, int topY, float health, int steps, float scale, float alpha,
+    DWORD fillArgb = kHealthFillRed)
 {
     // Applies `alpha` to the alpha byte of an ARGB constant.
     const auto faded = [alpha](DWORD argb)
@@ -73,7 +77,7 @@ void DrawHealthBar(int centerX, int topY, float health, int steps, float scale, 
     const int stepHP = (int)(clampedHealth * steps);
 
     // Filled health segments.
-    const DWORD fillColor = faded(0xFFFA0A00u);
+    const DWORD fillColor = faded(fillArgb);
     for (int k = 0; k < stepHP; ++k)
     {
         RenderColorQuadARGB(
@@ -335,10 +339,15 @@ void SEASON3B::CNewUINameWindow::RenderMonsterHealthBars()
 
         // Bar fixed at ~3/7 of the original width, with 8 segments so each one
         // stays close to the original thickness (see DrawHealthBar for geometry).
-        DrawHealthBar(ScreenX, ScreenY, c->HealthStatus, 8, 3.f / 7.f, alpha);
+        DrawHealthBar(ScreenX, ScreenY, c->HealthStatus, 8, 3.f / 7.f, alpha,
+            c->Elite ? kHealthFillGold : kHealthFillRed);
 
-        // Name sits above the bar, centred on the same X.
-        g_pRenderText->SetTextColor(255, 230, 200, (BYTE)(alpha * 255.f + 0.5f));
+        // Name sits above the bar, centred on the same X; elites in gold.
+        const BYTE nameAlpha = (BYTE)(alpha * 255.f + 0.5f);
+        if (c->Elite)
+            g_pRenderText->SetTextColor(255, 200, 0, nameAlpha);
+        else
+            g_pRenderText->SetTextColor(255, 230, 200, nameAlpha);
         g_pRenderText->RenderText(ScreenX, ScreenY - 12, c->ID, 0, 0, RT3_WRITE_CENTER);
     }
 }
