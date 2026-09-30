@@ -20,6 +20,7 @@
 #include "UI/Combat/MonsterHealthBar.h"
 #include "GameLogic/Social/PartyManager.h"
 #include "Data/GameConfig/GameConfig.h"
+#include "UI/NewUI/NewUISystem.h"
 
 // DevEditor forward declarations (must be at global scope)
 #ifdef _EDITOR
@@ -160,6 +161,8 @@ bool SEASON3B::CNewUINameWindow::UpdateKeyEvent()
         m_bShowMonsterHealthBar = !m_bShowMonsterHealthBar;
         GameConfig::GetInstance().SetShowMonsterPlates(m_bShowMonsterHealthBar);
         GameConfig::GetInstance().Save();
+        g_pSystemLogBox->AddText(m_bShowMonsterHealthBar ? L"Monster plates: On" : L"Monster plates: Off",
+            SEASON3B::TYPE_SYSTEM_MESSAGE);
     }
 
     if (SEASON3B::IsPress(VK_F9) == true)
@@ -167,6 +170,12 @@ bool SEASON3B::CNewUINameWindow::UpdateKeyEvent()
         m_playerNameMode = UI::PlayerNames::NextMode(m_playerNameMode);
         GameConfig::GetInstance().SetPlayerNames(m_playerNameMode);
         GameConfig::GetInstance().Save();
+        const wchar_t* label = L"Player names: Off";
+        if (m_playerNameMode == UI::PlayerNames::PartyAndGuild)
+            label = L"Player names: Party + guild";
+        else if (m_playerNameMode == UI::PlayerNames::All)
+            label = L"Player names: All";
+        g_pSystemLogBox->AddText(label, SEASON3B::TYPE_SYSTEM_MESSAGE);
     }
 
     return true;
