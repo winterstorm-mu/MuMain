@@ -594,6 +594,17 @@ int g_iMousePopPosition_y = 0;
 extern int TimeRemain;
 extern bool EnableFastInput;
 
+// F10: toggles the zoom lock and reports the new state once the in-game UI exists.
+static void ToggleZoomLockWithNotice()
+{
+    CameraManager::Instance().ToggleZoomLock();
+    if (g_pSystemLogBox != nullptr)
+    {
+        g_pSystemLogBox->AddText(CameraManager::Instance().IsZoomLocked() ? L"Camera zoom: Locked" : L"Camera zoom: Unlocked",
+            SEASON3B::TYPE_SYSTEM_MESSAGE);
+    }
+}
+
 // The legacy Win32 message handler. SDL owns the event loop on Linux and only
 // bridges to this via the Windows-only message hook, so guard it off there.
 #ifdef _WIN32
@@ -606,7 +617,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     constexpr LPARAM PREVIOUS_KEY_STATE_MASK = 1 << 30;
     if (msg == WM_SYSKEYDOWN && wParam == VK_F10 && (lParam & PREVIOUS_KEY_STATE_MASK) == 0)
     {
-        CameraManager::Instance().ToggleZoomLock();
+        ToggleZoomLockWithNotice();
         return 0;
     }
 
@@ -1461,7 +1472,7 @@ MSG MainLoop()
                 // locked and the mouse wheel can never zoom. Edge-triggered.
                 if (event.key.scancode == SDL_SCANCODE_F10 && !event.key.repeat)
                 {
-                    CameraManager::Instance().ToggleZoomLock();
+                    ToggleZoomLockWithNotice();
                 }
 #endif
                 // Navigation/erase/clipboard for the focused portable field (#447).
