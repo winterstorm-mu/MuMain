@@ -41,7 +41,7 @@ public:
     bool SetCameraMode(CameraMode mode);
 
     /**
-     * @brief Cycles to next camera mode (F9 key)
+     * @brief Cycles to next camera mode (no key bound)
      */
     void CycleToNextMode();
 

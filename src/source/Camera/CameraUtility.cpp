@@ -17,12 +17,11 @@ extern float g_fSpecialHeight;
 // each binding once per press instead of on every tick.
 namespace
 {
-    bool s_bF9KeyPressed  = false;  // F9  — cycle camera mode
     bool s_bF11KeyPressed = false;  // F11 — reset active view
 }
 
 /**
- * @brief Handles the camera-related function keys (F9, F11).
+ * @brief Handles the camera-related function keys (F11).
  *
  * Lives at this layer so the bindings work the same regardless of which
  * camera is active. F10 (zoom lock) is handled directly in Winmain's
@@ -31,15 +30,11 @@ namespace
  */
 static void HandleCameraHotkeys()
 {
-    const bool bF9Down  = Core::Input::IsKeyDown(VK_F9);
     const bool bF11Down = Core::Input::IsKeyDown(VK_F11);
 
-    if (bF9Down && !s_bF9KeyPressed)
-        CameraManager::Instance().CycleToNextMode();
     if (bF11Down && !s_bF11KeyPressed)
         CameraManager::Instance().ResetActiveView();
 
-    s_bF9KeyPressed  = bF9Down;
     s_bF11KeyPressed = bF11Down;
 }
 

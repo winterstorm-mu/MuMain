@@ -16,6 +16,8 @@ For the in-editor tuning UI, see [`dev-editor.md`](dev-editor.md).
 | **Orbital** | Gameplay maps only | Middle-mouse drag to look around, wheel to zoom. |
 | **FreeFly** | Editor only | Free-look spectator. Not in Release builds. |
 
+Entering a gameplay map switches to Orbital, and no key switches back to
+Default (F9 now cycles player names, see the client interface docs).
 Switching cameras outside gameplay (login, character select) is not
 supported - only the Default camera runs there. Leaving a gameplay map
 automatically returns you to Default.
@@ -26,7 +28,6 @@ automatically returns you to Default.
 
 | Key | Action |
 |-----|--------|
-| **F9** | Cycle to the next camera (Default ↔ Orbital). |
 | **F10** | Toggle zoom lock. Default is **off** - the wheel zooms straight away, no unlock needed first. |
 | **F11** | Reset the active camera. Default returns to its starting zoom rung; Orbital also resets rotation. |
 | **Mouse wheel** | Zoom in / out (when zoom is unlocked). Precision touchpads and high-resolution wheels work: partial scrolls add up into whole steps instead of being ignored. |

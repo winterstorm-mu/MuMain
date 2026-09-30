@@ -50,7 +50,6 @@ puts you exactly where the gameplay camera now is, not where you left off.
 
 The standard in-game hotkeys still work with the editor open:
 
-- **F9** cycles Default ↔ Orbital.
 - **F10** toggles the zoom lock. F10 is intercepted at the Win32 message
   layer (`WM_SYSKEYDOWN`) so it fires reliably even when ImGui has
   keyboard focus.

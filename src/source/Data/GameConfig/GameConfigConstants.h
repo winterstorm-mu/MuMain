@@ -37,6 +37,8 @@ namespace CfgKeys
     // UI
     inline constexpr wchar_t CfgKeyUILocale[] = L"Locale";
     inline constexpr wchar_t CfgKeyFont[]     = L"Font";
+    inline constexpr wchar_t CfgKeyShowMonsterPlates[] = L"ShowMonsterPlates";
+    inline constexpr wchar_t CfgKeyPlayerNames[] = L"PlayerNames";
 
     // Camera
     inline constexpr wchar_t CfgKeyZoom[] = L"Zoom";
@@ -83,6 +85,9 @@ namespace CfgDefaults
     // Opt-in until real effects have been visually checked on target hardware.
     inline constexpr bool CfgDefaultSortParticleDraws = false;
     inline constexpr bool CfgDefaultVSync = true;
+    inline constexpr bool CfgDefaultShowMonsterPlates = true;
+    // UI::PlayerNames::Mode: 0 off, 1 party+guild, 2 all.
+    inline constexpr int CfgDefaultPlayerNames = 2;
 
     // "default" = this app's own platform-aware pick (prefers Vulkan on Windows to avoid
     // D3D12's vsync-cap bug; SDL's own auto-pick elsewhere). Other accepted values:
