@@ -3,6 +3,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "App/Control/ControlTaps.h"
 #include "Engine/Object/EditObjects.h"
 #include "UI/Chat/Chat.h"
 #include "MainScene.h"
@@ -384,6 +385,7 @@ static void SetupMainSceneViewport(int& outWidth, int& outHeight, BYTE& outByWat
     }
     const UI::Scaling::Position cursor = UI::Scaling::ActiveLogicalMouse();
     CameraProjection::ScreenToWorldRay(g_Camera, cursor.x, cursor.y, MouseTarget);
+    App::Control::Frames::RecordWorldCamera();
 }
 
 // DXP-23 diagnostic toggle -- see MainScene.h's SetDisableEffects() doc comment.
