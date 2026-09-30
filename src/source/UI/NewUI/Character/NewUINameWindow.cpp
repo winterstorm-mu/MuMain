@@ -69,8 +69,7 @@ void DrawHealthBar(int centerX, int topY, float health, int steps, float scale, 
     RenderColorQuadARGB((float)x, (float)y, totalWidth, 5.f, faded(0xFF330000u));
 
     // Inner track.
-    RenderColorQuadARGB((float)(x + borderWidth), (float)(y + borderHeight), stepsWidth, 1.f,
-        faded(0xFF320A00u));
+    RenderColorQuadARGB((float)(x + borderWidth), (float)(y + borderHeight), stepsWidth, 1.f, faded(0xFF320A00u));
 
     // HealthStatus < 0 is the "HP unknown" sentinel (server sends 0xFF -> -1, and
     // the field is initialized to -1), so render a full bar instead of an empty one.
@@ -81,12 +80,8 @@ void DrawHealthBar(int centerX, int topY, float health, int steps, float scale, 
     const DWORD fillColor = faded(fillArgb);
     for (int k = 0; k < stepHP; ++k)
     {
-        RenderColorQuadARGB(
-            (float)(x + borderWidth + (k * widthPerStep)),
-            (float)(y + borderHeight),
-            widthPerStep - stepSeparatorWidth,
-            2.f,
-            fillColor);
+        RenderColorQuadARGB((float)(x + borderWidth + (k * widthPerStep)), (float)(y + borderHeight),
+                            widthPerStep - stepSeparatorWidth, 2.f, fillColor);
     }
     DisableAlphaBlend();
 }
@@ -215,7 +210,8 @@ void SEASON3B::CNewUINameWindow::RenderName()
 
             const bool isParty = alliesOnly && g_pPartyManager->IsPartyMemberChar(c);
             const bool isGuild = alliesOnly && Hero->GuildMarkIndex >= 0 && c->GuildMarkIndex == Hero->GuildMarkIndex;
-            if (UI::PlayerNames::ShouldName(m_playerNameMode, g_bGMObservation, inChaosCastle, c == Hero, isParty, isGuild))
+            if (UI::PlayerNames::ShouldName(m_playerNameMode, g_bGMObservation, inChaosCastle, c == Hero, isParty,
+                                            isGuild))
                 UI::Chat::KeepNameAlive(c);
         }
     }

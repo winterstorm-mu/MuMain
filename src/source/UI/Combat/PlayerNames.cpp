@@ -13,7 +13,8 @@ UI::PlayerNames::Mode UI::PlayerNames::NextMode(Mode mode)
     }
 }
 
-bool UI::PlayerNames::ShouldName(Mode mode, bool gmObservation, bool inChaosCastle, bool isHero, bool isPartyMember, bool isGuildMember)
+bool UI::PlayerNames::ShouldName(Mode mode, bool gmObservation, bool inChaosCastle, bool isHero, bool isPartyMember,
+                                 bool isGuildMember)
 {
     if (gmObservation)
         return true;
