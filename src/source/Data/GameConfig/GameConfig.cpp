@@ -79,6 +79,7 @@ void GameConfig::Load()
 
     m_uiLocale = ReadString(CfgSectionUI, CfgKeyUILocale, CfgDefaultUILocale);
     m_fontSelection = ReadString(CfgSectionUI, CfgKeyFont, CfgDefaultFont);
+    m_showMonsterPlates = ReadBool(CfgSectionUI, CfgKeyShowMonsterPlates, CfgDefaultShowMonsterPlates);
 
     m_zoom = ReadInt(CfgSectionCamera, CfgKeyZoom, CfgDefaultZoom);
     m_sortParticleDraws = ReadBool(CfgSectionRender, CfgKeySortParticleDraws, CfgDefaultSortParticleDraws);
@@ -126,6 +127,7 @@ void GameConfig::Save()
 
     WriteString(CfgSectionUI, CfgKeyUILocale, m_uiLocale);
     WriteString(CfgSectionUI, CfgKeyFont, m_fontSelection);
+    WriteBool(CfgSectionUI, CfgKeyShowMonsterPlates, m_showMonsterPlates);
 
     WriteInt(CfgSectionCamera, CfgKeyZoom, m_zoom);
     WriteBool(CfgSectionRender, CfgKeyVSync, m_vsyncEnabled);
@@ -188,6 +190,11 @@ void GameConfig::SetSoundVolume(int level)
 void GameConfig::SetMusicVolume(int level)
 {
     m_musicVolume = level;
+}
+
+void GameConfig::SetShowMonsterPlates(bool show)
+{
+    m_showMonsterPlates = show;
 }
 
 void GameConfig::SetVSyncEnabled(bool enabled)

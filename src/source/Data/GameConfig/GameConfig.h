@@ -87,6 +87,10 @@ public:
     int GetZoom() const { return m_zoom; }
     void SetZoom(int zoom);
 
+    // Monster name/HP plates (F8)
+    bool GetShowMonsterPlates() const { return m_showMonsterPlates; }
+    void SetShowMonsterPlates(bool show);
+
     // Render
     bool GetSortParticleDraws() const { return m_sortParticleDraws; }
     bool GetVSyncEnabled() const { return m_vsyncEnabled; }
@@ -131,6 +135,7 @@ private:
 
     std::wstring m_uiLocale;
     std::wstring m_fontSelection;
+    bool m_showMonsterPlates;
 
     int m_zoom;
     bool m_sortParticleDraws;
