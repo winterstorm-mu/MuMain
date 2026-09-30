@@ -6,37 +6,37 @@ namespace Elites
 {
 namespace
 {
-    constexpr int TableSize = LastNumber - FirstNumber + 1;
-    constexpr const wchar_t* FilePath = L"Data\\EliteMonsters.txt";
+constexpr int TableSize = LastNumber - FirstNumber + 1;
+constexpr const wchar_t* FilePath = L"Data\\EliteMonsters.txt";
 
-    Entry g_table[TableSize];
-    bool g_present[TableSize];
+Entry g_table[TableSize];
+bool g_present[TableSize];
 
-    // Row: <number>\t<appearance>\t"<Name>". Returns false for comments and malformed rows.
-    bool ParseRow(const char* line, int& number, int& appearance, char* name, size_t nameSize)
-    {
-        if (line[0] == '/' && line[1] == '/')
-            return false;
+// Row: <number>\t<appearance>\t"<Name>". Returns false for comments and malformed rows.
+bool ParseRow(const char* line, int& number, int& appearance, char* name, size_t nameSize)
+{
+    if (line[0] == '/' && line[1] == '/')
+        return false;
 
-        int consumed = 0;
-        if (sscanf(line, "%d %d %n", &number, &appearance, &consumed) != 2 || consumed == 0)
-            return false;
+    int consumed = 0;
+    if (sscanf(line, "%d %d %n", &number, &appearance, &consumed) != 2 || consumed == 0)
+        return false;
 
-        const char* open = strchr(line + consumed, '"');
-        if (open == nullptr)
-            return false;
-        const char* close = strrchr(open + 1, '"');
-        if (close == nullptr || close == open + 1)
-            return false;
+    const char* open = strchr(line + consumed, '"');
+    if (open == nullptr)
+        return false;
+    const char* close = strrchr(open + 1, '"');
+    if (close == nullptr || close == open + 1)
+        return false;
 
-        const size_t length = static_cast<size_t>(close - open - 1);
-        if (length >= nameSize)
-            return false;
-        memcpy(name, open + 1, length);
-        name[length] = '\0';
-        return true;
-    }
+    const size_t length = static_cast<size_t>(close - open - 1);
+    if (length >= nameSize)
+        return false;
+    memcpy(name, open + 1, length);
+    name[length] = '\0';
+    return true;
 }
+} // namespace
 
 void Load()
 {
@@ -76,4 +76,4 @@ const Entry* Find(int number)
     const int slot = number - FirstNumber;
     return g_present[slot] ? &g_table[slot] : nullptr;
 }
-}
+} // namespace Elites

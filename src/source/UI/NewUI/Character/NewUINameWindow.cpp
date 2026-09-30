@@ -40,7 +40,7 @@ constexpr DWORD kHealthFillRed = 0xFFFA0A00u;
 constexpr DWORD kHealthFillGold = 0xFFFFC800u;
 
 void DrawHealthBar(int centerX, int topY, float health, int steps, float scale, float alpha,
-    DWORD fillArgb = kHealthFillRed)
+                   DWORD fillArgb = kHealthFillRed)
 {
     // Applies `alpha` to the alpha byte of an ARGB constant.
     const auto faded = [alpha](DWORD argb)
@@ -162,7 +162,7 @@ bool SEASON3B::CNewUINameWindow::UpdateKeyEvent()
         GameConfig::GetInstance().SetShowMonsterPlates(m_bShowMonsterHealthBar);
         GameConfig::GetInstance().Save();
         g_pSystemLogBox->AddText(m_bShowMonsterHealthBar ? L"Monster plates: On" : L"Monster plates: Off",
-            SEASON3B::TYPE_SYSTEM_MESSAGE);
+                                 SEASON3B::TYPE_SYSTEM_MESSAGE);
     }
 
     if (SEASON3B::IsPress(VK_F9) == true)
@@ -349,7 +349,7 @@ void SEASON3B::CNewUINameWindow::RenderMonsterHealthBars()
         // Bar fixed at ~3/7 of the original width, with 8 segments so each one
         // stays close to the original thickness (see DrawHealthBar for geometry).
         DrawHealthBar(ScreenX, ScreenY, c->HealthStatus, 8, 3.f / 7.f, alpha,
-            c->Elite ? kHealthFillGold : kHealthFillRed);
+                      c->Elite ? kHealthFillGold : kHealthFillRed);
 
         // Name sits above the bar, centred on the same X; elites in gold.
         const BYTE nameAlpha = (BYTE)(alpha * 255.f + 0.5f);

@@ -600,8 +600,9 @@ static void ToggleZoomLockWithNotice()
     CameraManager::Instance().ToggleZoomLock();
     if (g_pSystemLogBox != nullptr)
     {
-        g_pSystemLogBox->AddText(CameraManager::Instance().IsZoomLocked() ? L"Camera zoom: Locked" : L"Camera zoom: Unlocked",
-            SEASON3B::TYPE_SYSTEM_MESSAGE);
+        g_pSystemLogBox->AddText(CameraManager::Instance().IsZoomLocked() ? L"Camera zoom: Locked"
+                                                                          : L"Camera zoom: Unlocked",
+                                 SEASON3B::TYPE_SYSTEM_MESSAGE);
     }
 }
 
