@@ -331,7 +331,7 @@ void OrbitalCamera::InitializeOrbitalFromCurrentState(const vec3_t lookAtPoint, 
     // lookAtPoint here and overwrote m_Target = lookAtPoint, the very
     // next frame UpdateTarget would snap m_Target back to Hero and the
     // camera would jump by (Hero − lookAtPoint) — visible as a one-frame
-    // character teleport on F9 switch.
+    // character teleport on a mode switch.
     //
     // lookAtPoint is kept as a parameter for the static-scene path
     // (CalculateOrbitOriginForStaticScene already overwrote m_Target with

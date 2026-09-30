@@ -16,6 +16,10 @@ namespace UI::Chat
 
     void CreateChat(wchar_t* ID, const wchar_t* Text, CHARACTER* c, int Flag = 0, int SetColor = -1);
     int  CreateChat(wchar_t* character_name, const wchar_t* chat_text, OBJECT* Owner, int Flag = 0, int SetColor = -1);
+    // Keeps Owner's name balloon up while called every frame. CreateChat
+    // re-formats the guild lines on each call, so this refreshes only once the
+    // balloon's IDLifeTime has run below half.
+    void KeepNameAlive(CHARACTER* Owner);
     void AssignChat(wchar_t* ID, const wchar_t* Text, int Flag = 0);
     void MoveChat();
     void SetPlayerColor(BYTE PK);

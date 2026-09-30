@@ -18,6 +18,7 @@
 #include "Camera/CameraProjection.h"
 #include "Camera/CameraState.h"
 #include "UI/Combat/MonsterHealthBar.h"
+#include "GameLogic/Social/PartyManager.h"
 #include "Data/GameConfig/GameConfig.h"
 
 // DevEditor forward declarations (must be at global scope)
@@ -97,6 +98,7 @@ SEASON3B::CNewUINameWindow::CNewUINameWindow()
 
     m_bShowItemName = false;
     m_bShowMonsterHealthBar = true;
+    m_playerNameMode = UI::PlayerNames::All;
 }
 
 SEASON3B::CNewUINameWindow::~CNewUINameWindow()
@@ -115,6 +117,7 @@ bool SEASON3B::CNewUINameWindow::Create(CNewUIManager* pNewUIMng, int x, int y)
     SetPos(x, y);
 
     m_bShowMonsterHealthBar = GameConfig::GetInstance().GetShowMonsterPlates();
+    m_playerNameMode = static_cast<UI::PlayerNames::Mode>(GameConfig::GetInstance().GetPlayerNames());
 
     Show(true);
 
@@ -155,6 +158,13 @@ bool SEASON3B::CNewUINameWindow::UpdateKeyEvent()
         GameConfig::GetInstance().Save();
     }
 
+    if (SEASON3B::IsPress(VK_F9) == true)
+    {
+        m_playerNameMode = UI::PlayerNames::NextMode(m_playerNameMode);
+        GameConfig::GetInstance().SetPlayerNames(m_playerNameMode);
+        GameConfig::GetInstance().Save();
+    }
+
     return true;
 }
 
@@ -179,19 +189,21 @@ bool SEASON3B::CNewUINameWindow::Render()
 
 void SEASON3B::CNewUINameWindow::RenderName()
 {
-    if (g_bGMObservation == true)
+    const bool inChaosCastle = gMapManager.InChaosCastle();
+    if (g_bGMObservation || (m_playerNameMode != UI::PlayerNames::Off && !inChaosCastle))
     {
+        const bool alliesOnly = m_playerNameMode == UI::PlayerNames::PartyAndGuild;
         for (int i = 0; i < MAX_CHARACTERS_CLIENT; i++)
         {
             CHARACTER* c = &CharactersClient[i];
             OBJECT* o = &c->Object;
-            if (o->Live && o->Kind == KIND_PLAYER)
-            {
-                if (IsShopTitleVisible(c) == false)
-                {
-                    UI::Chat::CreateChat(c->ID, L"", c);
-                }
-            }
+            if (!o->Live || !o->Visible || o->Kind != KIND_PLAYER || IsShopTitleVisible(c))
+                continue;
+
+            const bool isParty = alliesOnly && g_pPartyManager->IsPartyMemberChar(c);
+            const bool isGuild = alliesOnly && Hero->GuildMarkIndex >= 0 && c->GuildMarkIndex == Hero->GuildMarkIndex;
+            if (UI::PlayerNames::ShouldName(m_playerNameMode, g_bGMObservation, inChaosCastle, c == Hero, isParty, isGuild))
+                UI::Chat::KeepNameAlive(c);
         }
     }
 
