@@ -20,6 +20,7 @@
 #include "UI/Combat/MonsterHealthBar.h"
 #include "GameLogic/Social/PartyManager.h"
 #include "Data/GameConfig/GameConfig.h"
+#include "UI/NewUI/NewUISystem.h"
 
 // DevEditor forward declarations (must be at global scope)
 #ifdef _EDITOR
@@ -34,8 +35,12 @@ namespace
 // Draws a segmented monster HP bar, horizontally centered on centerX with its
 // top edge at topY. `steps` is the segment count (HP granularity); `scale`
 // horizontally compresses the bar (1.0 == original width). `alpha` (0..1) scales
-// the alpha byte of every quad.
-void DrawHealthBar(int centerX, int topY, float health, int steps, float scale, float alpha)
+// the alpha byte of every quad. `fillArgb` is the colour of the filled segments.
+constexpr DWORD kHealthFillRed = 0xFFFA0A00u;
+constexpr DWORD kHealthFillGold = 0xFFFFC800u;
+
+void DrawHealthBar(int centerX, int topY, float health, int steps, float scale, float alpha,
+                   DWORD fillArgb = kHealthFillRed)
 {
     // Applies `alpha` to the alpha byte of an ARGB constant.
     const auto faded = [alpha](DWORD argb)
@@ -64,8 +69,7 @@ void DrawHealthBar(int centerX, int topY, float health, int steps, float scale, 
     RenderColorQuadARGB((float)x, (float)y, totalWidth, 5.f, faded(0xFF330000u));
 
     // Inner track.
-    RenderColorQuadARGB((float)(x + borderWidth), (float)(y + borderHeight), stepsWidth, 1.f,
-        faded(0xFF320A00u));
+    RenderColorQuadARGB((float)(x + borderWidth), (float)(y + borderHeight), stepsWidth, 1.f, faded(0xFF320A00u));
 
     // HealthStatus < 0 is the "HP unknown" sentinel (server sends 0xFF -> -1, and
     // the field is initialized to -1), so render a full bar instead of an empty one.
@@ -73,15 +77,11 @@ void DrawHealthBar(int centerX, int topY, float health, int steps, float scale, 
     const int stepHP = (int)(clampedHealth * steps);
 
     // Filled health segments.
-    const DWORD fillColor = faded(0xFFFA0A00u);
+    const DWORD fillColor = faded(fillArgb);
     for (int k = 0; k < stepHP; ++k)
     {
-        RenderColorQuadARGB(
-            (float)(x + borderWidth + (k * widthPerStep)),
-            (float)(y + borderHeight),
-            widthPerStep - stepSeparatorWidth,
-            2.f,
-            fillColor);
+        RenderColorQuadARGB((float)(x + borderWidth + (k * widthPerStep)), (float)(y + borderHeight),
+                            widthPerStep - stepSeparatorWidth, 2.f, fillColor);
     }
     DisableAlphaBlend();
 }
@@ -156,6 +156,8 @@ bool SEASON3B::CNewUINameWindow::UpdateKeyEvent()
         m_bShowMonsterHealthBar = !m_bShowMonsterHealthBar;
         GameConfig::GetInstance().SetShowMonsterPlates(m_bShowMonsterHealthBar);
         GameConfig::GetInstance().Save();
+        g_pSystemLogBox->AddText(m_bShowMonsterHealthBar ? L"Monster plates: On" : L"Monster plates: Off",
+                                 SEASON3B::TYPE_SYSTEM_MESSAGE);
     }
 
     if (SEASON3B::IsPress(VK_F9) == true)
@@ -163,6 +165,12 @@ bool SEASON3B::CNewUINameWindow::UpdateKeyEvent()
         m_playerNameMode = UI::PlayerNames::NextMode(m_playerNameMode);
         GameConfig::GetInstance().SetPlayerNames(m_playerNameMode);
         GameConfig::GetInstance().Save();
+        const wchar_t* label = L"Player names: Off";
+        if (m_playerNameMode == UI::PlayerNames::PartyAndGuild)
+            label = L"Player names: Party + guild";
+        else if (m_playerNameMode == UI::PlayerNames::All)
+            label = L"Player names: All";
+        g_pSystemLogBox->AddText(label, SEASON3B::TYPE_SYSTEM_MESSAGE);
     }
 
     return true;
@@ -202,7 +210,8 @@ void SEASON3B::CNewUINameWindow::RenderName()
 
             const bool isParty = alliesOnly && g_pPartyManager->IsPartyMemberChar(c);
             const bool isGuild = alliesOnly && Hero->GuildMarkIndex >= 0 && c->GuildMarkIndex == Hero->GuildMarkIndex;
-            if (UI::PlayerNames::ShouldName(m_playerNameMode, g_bGMObservation, inChaosCastle, c == Hero, isParty, isGuild))
+            if (UI::PlayerNames::ShouldName(m_playerNameMode, g_bGMObservation, inChaosCastle, c == Hero, isParty,
+                                            isGuild))
                 UI::Chat::KeepNameAlive(c);
         }
     }
@@ -335,10 +344,15 @@ void SEASON3B::CNewUINameWindow::RenderMonsterHealthBars()
 
         // Bar fixed at ~3/7 of the original width, with 8 segments so each one
         // stays close to the original thickness (see DrawHealthBar for geometry).
-        DrawHealthBar(ScreenX, ScreenY, c->HealthStatus, 8, 3.f / 7.f, alpha);
+        DrawHealthBar(ScreenX, ScreenY, c->HealthStatus, 8, 3.f / 7.f, alpha,
+                      c->Elite ? kHealthFillGold : kHealthFillRed);
 
-        // Name sits above the bar, centred on the same X.
-        g_pRenderText->SetTextColor(255, 230, 200, (BYTE)(alpha * 255.f + 0.5f));
+        // Name sits above the bar, centred on the same X; elites in gold.
+        const BYTE nameAlpha = (BYTE)(alpha * 255.f + 0.5f);
+        if (c->Elite)
+            g_pRenderText->SetTextColor(255, 200, 0, nameAlpha);
+        else
+            g_pRenderText->SetTextColor(255, 230, 200, nameAlpha);
         g_pRenderText->RenderText(ScreenX, ScreenY - 12, c->ID, 0, 0, RT3_WRITE_CENTER);
     }
 }

@@ -88,11 +88,17 @@ public:
     void SetZoom(int zoom);
 
     // Monster name/HP plates (F8)
-    bool GetShowMonsterPlates() const { return m_showMonsterPlates; }
+    bool GetShowMonsterPlates() const
+    {
+        return m_showMonsterPlates;
+    }
     void SetShowMonsterPlates(bool show);
 
     // Player name balloons (F9): 0 off, 1 party+guild, 2 all
-    int GetPlayerNames() const { return m_playerNames; }
+    int GetPlayerNames() const
+    {
+        return m_playerNames;
+    }
     void SetPlayerNames(int mode);
 
     // Render

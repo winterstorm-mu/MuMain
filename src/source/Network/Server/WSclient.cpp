@@ -2971,6 +2971,7 @@ void ReceiveCreateMonsterViewport(const BYTE* ReceiveBuffer)
         int TeleportFlag = (Data2->KeyH & 0x40) >> 6;
 
         Key &= 0x7FFF;
+        const bool alreadyInView = FindCharacterIndex(Key) < MAX_CHARACTERS_CLIENT;
         CHARACTER* c = CreateMonster(Type, Data2->PositionX, Data2->PositionY, Key);
 
         g_ConsoleDebug->Write(MCD_RECEIVE, L"0x13 [ReceiveCreateMonsterViewport(Type : %d | Key : %d)]", Type, Key);
@@ -2985,6 +2986,12 @@ void ReceiveCreateMonsterViewport(const BYTE* ReceiveBuffer)
         }
 
         App::Control::Events::RecordViewEnterKey(Key);
+
+        if (c->Elite && !alreadyInView)
+        {
+            g_pSystemLogBox->AddText(std::wstring(c->ID) + L" is nearby!", SEASON3B::TYPE_SYSTEM_MESSAGE);
+            PlayBuffer(SOUND_RING_EVENT_START);
+        }
 
         for (int j = 0; j < Data2->s_BuffCount; ++j)
         {
