@@ -105,11 +105,15 @@ struct ItemGlowColors
 // The model of one item: which .bmd file is opened for it, where its
 // textures are and how it is drawn. One entry of the model files
 // (Data/Items/Models). Each item keeps its own model slot, MODEL_ITEM + item
-// type.
+// type; items that share a model (SharedItemModel) share its loaded data.
 struct ItemModelDefinition
 {
     int group = 0;
     int number = 0;
+    // The name of a shared model (Data/Items/Models/SharedModels.json) whose
+    // file, texture folders and none-blend meshes the item uses; the loading
+    // fills them in. Empty: the item has a file of its own.
+    std::string model;
     // Relative to the client folder, with '/': "Data/Item/Sword01.bmd".
     std::string file;
     // Folders below Data/ with the textures of the model: "Item",
@@ -127,10 +131,14 @@ struct ItemModelDefinition
     // The look of the model when it is more than a plain textured model: the
     // name of a render style (Render/Items/ItemRenderStyles). Empty: plain.
     std::string renderStyle;
+    // What the model does before it is drawn (sprites and particles on its
+    // bones, a pulsing glow mesh, its own drawing, ...): the name of an item
+    // effect (Render/Items/ItemEffects). Empty: none.
+    std::string itemEffect;
 
     bool Exists() const
     {
-        return !file.empty();
+        return !file.empty() || !model.empty();
     }
 
     bool operator==(const ItemModelDefinition&) const = default;

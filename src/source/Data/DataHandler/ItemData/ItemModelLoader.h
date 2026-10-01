@@ -8,15 +8,30 @@
 // data must be loaded first (CItemDataHandler::LoadModels).
 namespace Data::Items::ModelLoader
 {
-// Whether a render style of this name exists (the render styles are drawing
-// code, Render::Items::Styles::Exists).
-using RenderStyleExists = bool (*)(std::string_view name);
+// Whether a look of this name exists.
+using LookExists = bool (*)(std::string_view name);
 
-// Opens the .bmd file of every item model; `renderStyleExists` checks the
-// "renderStyle" names.
-void OpenModels(RenderStyleExists renderStyleExists);
+// No look exists: a check that is left out reports all names.
+inline bool NoLookExists(std::string_view)
+{
+    return false;
+}
 
-// Loads the textures of every item model from its texture folders.
+// The looks that exist; they are drawing code (Render::Items::Styles::Exists,
+// Render::Items::ItemEffects::Exists).
+struct LookNames
+{
+    LookExists renderStyle = NoLookExists;
+    LookExists itemEffect = NoLookExists;
+};
+
+// Opens the .bmd file of every item model; `lookNames` checks the names of
+// the "renderStyle" and "itemEffect" values. The file of a shared model is
+// opened once, by its first item; the others use the data of that slot.
+void OpenModels(const LookNames& lookNames);
+
+// Loads the textures of every item model from its texture folders (those of
+// a shared model once).
 void OpenTextures();
 
 // The message for the player about the missing model files and textures
