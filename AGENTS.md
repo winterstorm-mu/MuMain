@@ -30,7 +30,9 @@ Quick references:
 
 ## Branch and PR conventions
 
-- Target branch for PRs is `main`.
+- `main` and `development` are push-protected. Work on `dev/<task_name>` (one
+  branch per plan set, cut from `development`) and open the PR into
+  `development`; `development` reaches `main` by PR.
 - Keep changes focused — one concern per commit (see rule 10 in the coding
   rules). Smaller diffs review faster.
 - Match the style of existing commit messages in `git log`.

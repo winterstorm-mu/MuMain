@@ -1,0 +1,11 @@
+// Elite monsters: <monster number><TAB><appearance number><TAB>"<Name>"
+// A row makes the client render that monster as the appearance monster, always
+// hostile, with a gold plate and a "nearby" alert.
+// Elite numbers are 900-1023 (the client decodes the type from 10 bits).
+// How to add one: docs/systems/elites.md
+900	55	"Death King"
+901	56	"Death Bone"
+902	43	"Molt"
+903	18	"Stone Gorgon"
+904	571	"Dungeon Warden"
+905	42	"Red Dragon"

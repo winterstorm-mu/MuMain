@@ -272,7 +272,7 @@ check("matrix." not in native_job, "Main Windows asset job must use fixed values
 for required in (
     "name: Windows Native Build (x64, Release, editor OFF)",
     "runs-on: windows-latest",
-    "if: github.event_name == 'push' && github.ref == 'refs/heads/main'",
+    "if: github.event_name != 'pull_request'",
 ):
     check(required in native_job, f"Main Windows job missing {required}")
 
@@ -396,7 +396,9 @@ for (
     for required in (
         f"name: {display_name}",
         f"runs-on: {runner}",
-        "if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'",
+        "if: >-\n"
+        "      github.event_name == 'pull_request'\n"
+        "      || (github.event_name == 'push' && github.ref == 'refs/heads/main')",
     ):
         check(required in platform_job, f"{display_name} missing {required}")
     platform_archive = step(platform_job, job_name, "Archive runtime")

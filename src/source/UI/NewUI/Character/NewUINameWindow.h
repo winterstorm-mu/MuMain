@@ -8,6 +8,7 @@
 #pragma once
 
 #include "UI/NewUI/NewUIManager.h"
+#include "UI/Combat/PlayerNames.h"
 
 namespace SEASON3B
 {
@@ -38,6 +39,7 @@ namespace SEASON3B
 
         bool m_bShowItemName;
         bool m_bShowMonsterHealthBar;
+        UI::PlayerNames::Mode m_playerNameMode;
 
         void RenderMonsterHealthBars();
     };

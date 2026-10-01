@@ -87,6 +87,20 @@ public:
     int GetZoom() const { return m_zoom; }
     void SetZoom(int zoom);
 
+    // Monster name/HP plates (F8)
+    bool GetShowMonsterPlates() const
+    {
+        return m_showMonsterPlates;
+    }
+    void SetShowMonsterPlates(bool show);
+
+    // Player name balloons (F9): 0 off, 1 party+guild, 2 all
+    int GetPlayerNames() const
+    {
+        return m_playerNames;
+    }
+    void SetPlayerNames(int mode);
+
     // Render
     bool GetSortParticleDraws() const { return m_sortParticleDraws; }
     bool GetVSyncEnabled() const { return m_vsyncEnabled; }
@@ -131,6 +145,8 @@ private:
 
     std::wstring m_uiLocale;
     std::wstring m_fontSelection;
+    bool m_showMonsterPlates;
+    int m_playerNames;
 
     int m_zoom;
     bool m_sortParticleDraws;

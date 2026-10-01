@@ -5,10 +5,10 @@
  */
 enum class CameraMode
 {
-    Default,    // Original third-person follow camera
-    Orbital,    // Spherical orbit around character (F9 toggle)
+    Default, // Original third-person follow camera
+    Orbital, // Spherical orbit around character (set on entering MainScene)
 #ifdef _EDITOR
-    FreeFly,    // Unconstrained free movement (editor only)
+    FreeFly, // Unconstrained free movement (editor only)
 #endif
 };
 

@@ -543,6 +543,21 @@ int CreateChat(wchar_t* character_name, const wchar_t* chat_text, OBJECT* Owner,
     return 0;
 }
 
+void KeepNameAlive(CHARACTER* Owner)
+{
+    // CreateChat sets IDLifeTime to 10 on an existing slot (100 on a new one).
+    constexpr float RefreshBelowLifeTime = 5.f;
+
+    for (int i = 0; i < MAX_CHAT; i++)
+    {
+        const CHAT* c = &Chat[i];
+        if (c->Owner == Owner && c->IDLifeTime > RefreshBelowLifeTime && HasCurrentOwnerName(c->ID, Owner->ID))
+            return;
+    }
+
+    CreateChat(Owner->ID, L"", Owner);
+}
+
 void AssignChat(wchar_t* character_name, const wchar_t* chat_text, int flag)
 {
     for (int i = 0; i < MAX_CHARACTERS_CLIENT; i++)

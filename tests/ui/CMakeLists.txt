@@ -47,6 +47,13 @@ mu_add_test(
 )
 
 mu_add_test(
+    NAME player_names_tests
+    SOURCES
+        test_player_names.cpp
+        ${CMAKE_SOURCE_DIR}/src/source/UI/Combat/PlayerNames.cpp
+)
+
+mu_add_test(
     NAME ui_scaling_tests
     SOURCES
         test_ui_scaling.cpp
