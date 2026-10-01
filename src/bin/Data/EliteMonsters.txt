@@ -5,7 +5,7 @@
 // How to add one: docs/systems/elites.md
 900	55	"Death King"
 901	56	"Death Bone"
-902	68	"Molt"
+902	43	"Molt"
 903	18	"Stone Gorgon"
-904	211	"Dungeon Warden"
+904	571	"Dungeon Warden"
 905	42	"Red Dragon"
