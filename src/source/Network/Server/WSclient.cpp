@@ -87,6 +87,7 @@
 
 #include "MUHelper/MuHelper.h"
 #include "GameLogic/Items/ItemCategories.h"
+#include "Data/GameData/ItemData/ItemModelSlots.h"
 
 #define MAX_DEBUG_MAX 10
 
@@ -2398,7 +2399,7 @@ void ReceiveChangePlayer(std::span<const BYTE> ReceiveBuffer)
         }
         else
         {
-            c->Weapon[0].Type = MODEL_ITEM + Type;
+            c->Weapon[0].Type = Data::Items::ToModelSlot(Type);
             c->Weapon[0].Level = Data->ItemLevel;
             c->Weapon[0].ExcellentFlags = Data->ExcellentFlags;
         }
@@ -2412,7 +2413,7 @@ void ReceiveChangePlayer(std::span<const BYTE> ReceiveBuffer)
         }
         else
         {
-            c->Weapon[1].Type = MODEL_ITEM + Type;
+            c->Weapon[1].Type = Data::Items::ToModelSlot(Type);
             c->Weapon[1].Level = Data->ItemLevel;
             c->Weapon[1].ExcellentFlags = Data->ExcellentFlags;
             CreatePetDarkSpirit_Now(c);
@@ -2429,7 +2430,7 @@ void ReceiveChangePlayer(std::span<const BYTE> ReceiveBuffer)
         }
         else
         {
-            c->BodyPart[BODYPART_HELM].Type = MODEL_ITEM + Type;
+            c->BodyPart[BODYPART_HELM].Type = Data::Items::ToModelSlot(Type);
             c->BodyPart[BODYPART_HELM].Level = Data->ItemLevel;
             c->BodyPart[BODYPART_HELM].ExcellentFlags = Data->ExcellentFlags;
             c->BodyPart[BODYPART_HELM].AncientDiscriminator = Data->AncientDiscriminator;
@@ -2445,7 +2446,7 @@ void ReceiveChangePlayer(std::span<const BYTE> ReceiveBuffer)
         }
         else
         {
-            c->BodyPart[BODYPART_ARMOR].Type = MODEL_ITEM + Type;
+            c->BodyPart[BODYPART_ARMOR].Type = Data::Items::ToModelSlot(Type);
             c->BodyPart[BODYPART_ARMOR].Level = Data->ItemLevel;
             c->BodyPart[BODYPART_ARMOR].ExcellentFlags = Data->ExcellentFlags;
             c->BodyPart[BODYPART_ARMOR].AncientDiscriminator = Data->AncientDiscriminator;
@@ -2461,7 +2462,7 @@ void ReceiveChangePlayer(std::span<const BYTE> ReceiveBuffer)
         }
         else
         {
-            c->BodyPart[BODYPART_PANTS].Type = MODEL_ITEM + Type;
+            c->BodyPart[BODYPART_PANTS].Type = Data::Items::ToModelSlot(Type);
             c->BodyPart[BODYPART_PANTS].Level = Data->ItemLevel;
             c->BodyPart[BODYPART_PANTS].ExcellentFlags = Data->ExcellentFlags;
             c->BodyPart[BODYPART_PANTS].AncientDiscriminator = Data->AncientDiscriminator;
@@ -2477,7 +2478,7 @@ void ReceiveChangePlayer(std::span<const BYTE> ReceiveBuffer)
         }
         else
         {
-            c->BodyPart[BODYPART_GLOVES].Type = MODEL_ITEM + Type;
+            c->BodyPart[BODYPART_GLOVES].Type = Data::Items::ToModelSlot(Type);
             c->BodyPart[BODYPART_GLOVES].Level = Data->ItemLevel;
             c->BodyPart[BODYPART_GLOVES].ExcellentFlags = Data->ExcellentFlags;
             c->BodyPart[BODYPART_GLOVES].AncientDiscriminator = Data->AncientDiscriminator;
@@ -2493,7 +2494,7 @@ void ReceiveChangePlayer(std::span<const BYTE> ReceiveBuffer)
         }
         else
         {
-            c->BodyPart[BODYPART_BOOTS].Type = MODEL_ITEM + Type;
+            c->BodyPart[BODYPART_BOOTS].Type = Data::Items::ToModelSlot(Type);
             c->BodyPart[BODYPART_BOOTS].Level = Data->ItemLevel;
             c->BodyPart[BODYPART_BOOTS].ExcellentFlags = Data->ExcellentFlags;
             c->BodyPart[BODYPART_BOOTS].AncientDiscriminator = Data->AncientDiscriminator;
@@ -2510,7 +2511,7 @@ void ReceiveChangePlayer(std::span<const BYTE> ReceiveBuffer)
         }
         else
         {
-            c->Wing.Type = MODEL_ITEM + Type;
+            c->Wing.Type = Data::Items::ToModelSlot(Type);
             c->Wing.Level = 0;
             if (GameLogic::Items::IsClothWingModel(c->Wing.Type))
             {
@@ -2527,7 +2528,7 @@ void ReceiveChangePlayer(std::span<const BYTE> ReceiveBuffer)
         }
         else
         {
-            c->Helper.Type = MODEL_ITEM + Type;
+            c->Helper.Type = Data::Items::ToModelSlot(Type);
             c->Helper.Level = 0;
             switch (Type)
             {
