@@ -35,6 +35,8 @@
 #include "Data/DataHandler/EffectData/EffectDataHandler.h"
 #include "Data/DataHandler/ItemData/ItemDataHandler.h"
 #include "Data/DataHandler/ItemData/ItemModelLoader.h"
+#include "Data/GameData/EffectData/EffectTypeCatalogue.h"
+#include "Render/Effects/EffectRegistry.h"
 #include "Render/Items/ItemEffects.h"
 #include "Render/Items/ItemRenderStyles.h"
 #include "Core/Platform/ErrorDialog.h"
@@ -383,14 +385,17 @@ static void StopOnItemDataError(const std::string& errorMessage)
     StopOnDataError("Item data error", errorMessage);
 }
 
-// Loads the names of the effect types (Data/Effects); errors stop the game.
+// Loads the effect types (Data/Effects) and builds the effect registry from
+// their creation values; errors stop the game.
 static void OpenEffectTypeData()
 {
     std::string errorMessage;
     if (!Data::Effects::LoadEffectTypes(errorMessage))
     {
         StopOnDataError("Effect data error", errorMessage);
+        return;
     }
+    Render::Effects::BuildRegistry(g_EffectTypeCatalogue.GetCreateParams());
 }
 
 // Loads the item models (Data/Items/Models); without them no item could be
